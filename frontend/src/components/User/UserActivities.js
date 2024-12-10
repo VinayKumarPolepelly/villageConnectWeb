@@ -49,7 +49,7 @@ const UserActivities = () => {
   return (
     <div>
       <UserHeader />
-      <div className="container mx-auto p-4 w-11/12">
+      <div className="container mx-auto p-4 w-11/12 bg-green-50">
         <h1 className="text-2xl font-bold text-green-700 text-center mb-6">
           Village Activities
         </h1>

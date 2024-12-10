@@ -5,9 +5,15 @@ import "./App.css";
 
 const AdminLogin = lazy(() => import("./components/Admin/AdminLogin"));
 const AdminHomePage = lazy(() => import("./components/Admin/AdminHomePage"));
-const AdminUsers = lazy(() => import("./components/Admin/AdminUsers"));
+//const AdminUsers = lazy(() => import("./components/Admin/AdminUsers"));
 const AdminAddAnnouncement = lazy(() =>
   import("./components/Admin/AdminAddAnouncement")
+);
+const AdminViewComplaints = lazy(() =>
+  import("./components/Admin/AdminViewComplaints")
+);
+const AdminAddActivity = lazy(() =>
+  import("./components/Admin/AdminAddActivity")
 );
 const UserLogin = lazy(() => import("./components/User/UserLogin"));
 const UserHomePage = lazy(() => import("./components/User/UserHomePage"));
@@ -75,22 +81,29 @@ const appRouter = createBrowserRouter([
         ),
       },
       {
-        path: "/admin/users",
+        path: "admin/AddActivity",
         element: (
           <Suspense>
-            <AdminUsers />
+            <AdminAddActivity />
           </Suspense>
         ),
       },
       {
-        path: "/admin/addAnnouncement",
+        path: "admin/AddAnnouncement",
         element: (
           <Suspense>
             <AdminAddAnnouncement />
           </Suspense>
         ),
       },
-
+      {
+        path: "admin/ViewComplaints",
+        element: (
+          <Suspense>
+            <AdminViewComplaints />
+          </Suspense>
+        ),
+      },
       {
         path: "/user/",
         element: (

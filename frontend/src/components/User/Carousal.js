@@ -6,7 +6,7 @@ import { Pagination, Autoplay } from "swiper/modules";
 
 const CarouselComponent = () => {
   return (
-    <div className="w-[300px] max-w-4xl mx-auto ml-5 mt-4">
+    <div className="w-[300px] max-w-4xl mx-auto ml-[70px] mt-4">
       <Swiper
         modules={[Pagination, Autoplay]}
         spaceBetween={30}

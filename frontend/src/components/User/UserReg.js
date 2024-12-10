@@ -18,8 +18,8 @@ const UserReg = () => {
 
   const handlesubmitform = async (e) => {
     e.preventDefault();
-    const url = `${BASE_URL}/api/v1//userRegister`;
-
+    const url = `${BASE_URL}/api/v1/users/register`;
+   
     const data = {
       username: username.current.value,
       password: password.current.value,
@@ -28,6 +28,7 @@ const UserReg = () => {
       mobile: mobile.current.value,
       aadhar: aadhar.current.value,
       address: address.current.value,
+      role: "user",
     };
 
     const userDetails = JSON.stringify(data);
@@ -78,7 +79,7 @@ const UserReg = () => {
                       className="mb-2 p-3 ml-7 border-2 border-gray-500 text-md rounded-lg w-[18em]"
                       type="text"
                       placeholder="Enter your name"
-                      ref={username}
+                      ref={fullname}
                       required
                     />
                   </div>
@@ -159,6 +160,7 @@ const UserReg = () => {
                       className="mb-2 p-3 ml-7 border-2 border-gray-500 text-md rounded-lg w-[18em]"
                       placeholder="Create password"
                       name="password"
+                      ref={password}
                       required
                     />
                   </div>
@@ -171,9 +173,9 @@ const UserReg = () => {
                       className="mb-2 p-3 ml-7 border-2 border-gray-500 text-md rounded-lg w-[18em]"
                       name="confirmPassword"
                       placeholder="Re-enter password"
-                      ref={password}
                       required
                     />
+                    
                   </div>
                 </div>
                 {error && (

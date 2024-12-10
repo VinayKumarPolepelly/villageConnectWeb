@@ -63,7 +63,7 @@ const UserVillageAnnouncements = () => {
   return (
     <div>
       <UserHeader />
-      <div className="container mx-auto p-4 w-8/12">
+      <div className="container mx-auto p-4 w-8/12 bg-green-50">
         <h1 className="text-2xl font-bold mb-4 text-center text-green-700">
           Village Announcements
         </h1>

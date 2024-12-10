@@ -1,22 +1,22 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate} from "react-router-dom";
 import { FaUser } from "react-icons/fa";
-
+import { BASE_URL } from "../../helper";
 const UserProfileIcon = ({ si }) => (
   <div>
     <FaUser size={si} />
   </div>
 );
 
-const Logout = () => (
+const Logout = ({handleLogout, user}) => (
   <div className="flex justify-end ">
     <div className="w-[200px]  h-[200px] text-center p-5 bg-gray-100 border-4 border-green-200 shadow-2xl mt-[45px] mr-[65px]  absolute rounded-xl rounded-tr-none ">
       <div className="ml-[46px] h-[65px] w-[65px] mt-[-6px] text-green-700 rounded-full border-solid border-green-600   border-4 p-1 cursor-pointer active:border-gray-400 ">
         <UserProfileIcon si={48} />
       </div>
-      <h1 className="mt-4 ml-1 mb-3">Vinay Kumar</h1>
+      <h1 className="mt-4 ml-1 mb-3">User</h1>
       <button
-        onClick=""
+        onClick={handleLogout}
         className="text-sm text-white ml-1 border-2 p-[7px] bg-green-700 hover:bg-green-600 hover:shadow-lg active:bg-green-800 rounded-lg active:border-collapse active:font-semibold active:shadow-2xl"
       >
         LogOut
@@ -27,7 +27,61 @@ const Logout = () => (
 
 const UserHeader = () => {
   const [showItem, setShowItem] = useState(false);
+  const navigate = useNavigate();
+  //const [user, setUser] = useState(null);
+  //const [error, setError] = useState(null);
 
+  // useEffect(() => {
+  //   const fetchUsers = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${BASE_URL}/api/v1/users/getUserDetails`,
+  //         {
+  //           method: "GET",
+  //           credentials: "include", // Include credentials (cookies)
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //           },
+  //         }
+  //       );
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok");
+  //       }
+  //       const json = await response.json();
+  //       setUser(json.user);
+  //       //console.log(json.user);
+  //     } catch (error) {
+  //       if (error.message === "Network response was not ok") navigate("/");
+  //       setError("Error fetching employee data");
+  //     }
+  //   };
+
+  //   fetchUsers();
+  // }, [navigate]);
+
+
+
+  const handleLogout = async () => {
+    // try {
+    //   const response = await fetch(`${BASE_URL}/api/v1/users/logout`, {
+    //     method: "POST",
+    //     credentials: "include",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   });
+    //   if (!response.ok) {
+    //     throw new Error("Network response was not ok");
+    //   }
+      // if (response.ok) {
+        navigate("/"); // Redirect to the login page after successful logout
+    //   } else {
+    //     // console.error("Logout failed:", response.statusText);
+    //   }
+    // } catch (error) {
+    //   // console.error("Error logging out:", error);
+    // }
+  };
   return (
     <div className="sticky top-0  z-20 w-screen">
       <div className=" flex border-3 border bg-green-700 shadow-3xl rounded-b-2xl shadow-lg sticky ">
@@ -75,7 +129,7 @@ const UserHeader = () => {
           </div>
         </ul>
 
-        {showItem && <Logout />}
+        {showItem && <Logout handleLogout={handleLogout} />}
       </div>
     </div>
   );

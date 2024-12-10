@@ -1,5 +1,49 @@
+// import { Router } from "express";
+// import {
+//   registerUser,
+//   loginUser,
+//   logoutUser,
+//   addComplaint,
+//   getComplaints,
+// } from "../controllers/user.controller.js";
+// import { verifyJwt } from "../middlewares/auth.middleware.js";
+// import { loginRateLimit } from "../middlewares/rateLimit.js";
+// import { refreshAccessToken } from "../controllers/user.controller.js";
+// const router = Router();
+// router.route("/register").post(registerUser);
+
+// router.route("/login").post(loginRateLimit,loginUser);
+// //secured routes
+// router.route("/logout").post(logoutUser);
+
+// router.route("/addComplaint").post(addComplaint);
+// router.route("/getComplaints").get(getComplaints);
+
+//router.route("/refresh-token").post(refreshAccessToken);
+
+//export default router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import { Router } from "express";
 import {
+  addComplaint,
+  getComplaints,
+  registerUser,
   loginUser,
   logoutUser,
   refreshAccessToken,
@@ -8,19 +52,53 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 import { loginRateLimit } from "../middlewares/rateLimit.js";
 
 const router = Router();
+router.route("/register").post(registerUser);
+
 router.route("/login").post(loginRateLimit, loginUser);
 //secured routes
-router.route("/logout").post(verifyJwt, logoutUser);
+router.route("/logout").post(logoutUser);
 
 router.route("/refresh-token").post(refreshAccessToken);
-// router.route("/addProjectReport").post(verifyJwt, addProjectReport);
-// router.route("/addLeaveReport").post(verifyJwt, addLeaveReport);
-// router.route("/getSalareeDetails").get(verifyJwt, getSalareeDetails);
-// router.route("/getProjectDetails").get(verifyJwt, getProjectDetails);
-// router.route("/getLeaveDetails").get(verifyJwt, getLeaveDetails);
-// router.route("/getUserDetails").get(verifyJwt, getUserDetails);
-// router
-//   .route("/getProjectReportDetails")
-//   .get(verifyJwt, getProjectReportDetails);
+router.route("/addComplaint").post(addComplaint);
+router.route("/getComplaints").get(getComplaints);
 
 export default router;
+
+
+
+
+
+// // routes/userRoutes.js
+// import express from "express";
+// import { User } from "../models/user.model.js";
+// import bcrypt from "bcrypt";
+
+// const router = express.Router();
+
+// // User Login Route
+// router.post("/login", async (req, res) => {
+//   const { username, password } = req.body;
+
+//   try {
+//     const user = await User.findOne({ username });
+//     if (!user) {
+//       return res.status(400).json({ message: "User not found" });
+//     }
+
+//     const isPasswordCorrect = await user.isPasswordCorrect(password);
+//     if (!isPasswordCorrect) {
+//       return res.status(400).json({ message: "Incorrect password" });
+//     }
+
+//     const accessToken = user.generateAccessToken();
+//     res.status(200).json({
+//       message: "Login successful",
+//       accessToken: accessToken,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// });
+
+// export default router;

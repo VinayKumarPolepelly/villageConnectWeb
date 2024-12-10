@@ -17,4 +17,7 @@ app.use(cookieParser());
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/admins", adminRouter);
 
+
+
 export default app;
+
