@@ -1,6 +1,5 @@
-
 // import Header from "../Header";
-// import CarouselComponent from "./Carousal";  
+// import CarouselComponent from "./Carousal";
 // import React, { useRef, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 // import { BASE_URL } from "../../helper";
@@ -69,7 +68,7 @@
 //                   <h1 className="text-green-800 font-bold text-xl mb-3 ml-[120px]">
 //                     User Login
 //                   </h1>
-//                   <form className="flex flex-col " 
+//                   <form className="flex flex-col "
 //                   onSubmit={handlesubmitform}
 //                   ref={formRef}  >
 //                     <label className="mb-1 ml-7 text-[16px]  text-green-800">
@@ -109,7 +108,6 @@
 
 // export default userLogin;
 
-
 import Header from "../Header";
 import CarouselComponent from "./Carousal";
 import React, { useRef, useState } from "react";
@@ -117,9 +115,6 @@ import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../helper";
 import { toast, ToastContainer } from "react-toastify"; // Import ToastContainer and toast
 import "react-toastify/dist/ReactToastify.css";
-
-
-
 
 const UserLogin = () => {
   const username = useRef();
@@ -147,17 +142,28 @@ const UserLogin = () => {
         body: JSON.stringify(data),
       });
       const responseData = await response1.json();
+      if (response1.ok) {
+        // Store User Info in LocalStorag
+        localStorage.setItem("currentUser", JSON.stringify(data.username));
+      }
       if (!response1.ok) {
         // console.log(response1.status);
         toast.error(responseData.message);
         //throw new Error("Login failed");
       }
-      //console.log(responseData.data.accessToken);
+      //console.log(localStorage.getItem("currentUser"));
 
       // Assuming responseData.accessToken contains the access token
       // Set the accessToken cookie
       //document.cookie = `accessToken=${responseData.data.accessToken}; Secure; SameSite=None; Path=/`;
-      // localStorage.setItem("currentUser", currUser);
+
+      // localStorage.setItem(
+      //   "currentUser",
+      //   JSON.stringify(responseData.username)
+      // );
+      // console.log(JSON.parse(localStorage.getItem("currentUser")));
+      //const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      //console.log(currentUser);
 
       if (responseData.data.user.role === "admin") navigate(`/admin`);
       else navigate(`/user`);

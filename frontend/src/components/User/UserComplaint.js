@@ -2,31 +2,27 @@ import UserHeader from "./userHeader";
 import React, { useState, useEffect } from "react";
 import { BASE_URL } from "../../helper";
 import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UserComplaint = () => {
   const [complaints, setComplaints] = useState([]);
   const [formVisible, setFormVisible] = useState(false);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    category: "",
-    description: "",
-  });
-  //const [formSubmitted, setFormSubmitted] = useState(false); // State to track form submission
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
 
-  // Function to handle form input changes
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const curruser = JSON.parse(localStorage.getItem("currentUser"));
+  //console.log(curruser);
 
   // Function to submit the form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = `${BASE_URL}/api/v1/users/addComplaint`;
+    const url = `${BASE_URL}/api/v1/users/addComplaint/`;
     const data = {
-      category: formData.category,
-      description: formData.description,
+      category: category,
+      description: description,
+      username: curruser,
     };
     try {
       const response = await fetch(url, {
@@ -42,23 +38,22 @@ const UserComplaint = () => {
         throw new Error("Network response was not ok");
       }
       toast.success("Complaint added successfully");
-      const responseData = await response.json();
+      //const responseData = await response.json();
       //console.log(responseData);
       // navigate("/employeeLeaveReport");
 
       // Assuming responseData.accessToken contains the access token
-      document.cookie = `accessToken=${responseData.data.accessToken}; Secure; SameSite=None; Path=/`;
+      //document.cookie = `accessToken=${responseData.data.accessToken}; Secure; SameSite=None; Path=/`;
+
+      setDescription("");
+      setCategory("");
+      setFormVisible(false);
     } catch (error) {
       if (error.message === "Network response was not ok") {
         console.log("network Response not ok");
       }
-      //console.error("Submission error:", error);
-      // Handle submission error
     }
-
     // Reset form fields to their default values
-    setFormData({ category: "", description: "" });
-    setFormVisible(false);
   };
 
   useEffect(() => {
@@ -67,25 +62,37 @@ const UserComplaint = () => {
 
   const fetchComplaints = async () => {
     try {
-      const response = await fetch(`${BASE_URL}/api/v1/users/getComplaints`, {
-        method: "GET",
-        credentials: "include", // Include credentials (cookies)
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const username = JSON.parse(localStorage.getItem("currentUser"));
+      //console.log(username);
+      if (!username) {
+        throw new Error("User not logged in or username not found");
+      }
+
+      const response = await fetch(
+        `${BASE_URL}/api/v1/users/getComplaints/${username}`,
+        {
+          method: "GET",
+          credentials: "include", // Include credentials (cookies)
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
+
       const json = await response.json();
-      if (json?.complaint) {
+
+      if (json?.complaint && json.complaint.length > 0) {
         setComplaints(json.complaint);
-        // console.log(json.leaves);
       } else {
-        throw new Error("No Leaves field in response");
+        throw new Error("No complaints found for this user");
       }
     } catch (error) {
-      setError("Error fetching Leaves data");
+      console.error("Error fetching complaints:", error);
+      setError("Error fetching complaints data");
     }
   };
 
@@ -134,8 +141,8 @@ const UserComplaint = () => {
               </label>
               <select
                 name="category"
-                value={formData.category}
-                onChange={handleChange}
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
                 className="w-full p-2 border rounded"
                 required
               >
@@ -153,8 +160,8 @@ const UserComplaint = () => {
               <label className="block text-gray-700 mb-2">Description:</label>
               <textarea
                 name="description"
-                value={formData.description}
-                onChange={handleChange}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="w-full p-2 border rounded"
                 rows="4"
                 required
@@ -174,21 +181,36 @@ const UserComplaint = () => {
         <table className="min-w-full bg-white border rounded shadow-lg">
           <thead>
             <tr className="w-full bg-green-600 text-white">
-              <th className="py-2 px-4">Complaint ID</th>
               <th className="py-2 px-4">Date</th>
               <th className="py-2 px-4">Category</th>
+              <th className="py-2 px-4">Description</th>
               <th className="py-2 px-4">Status</th>
             </tr>
           </thead>
           <tbody>
-            {complaints.map((complaint) => (
-              <tr key={complaint.id} className="hover:bg-gray-100">
-                <td className="py-2 px-4 text-center">{complaint.id}</td>
+            {complaints.map((complaint, index) => (
+              <tr
+                key={complaint._id}
+                className={`${
+                  index % 2 === 0 ? "bg-green-100" : "bg-green-50"
+                }`}
+              >
                 <td className="py-2 px-4 text-center">
                   {formatDateAndTime(complaint.createdAt)}
                 </td>
                 <td className="py-2 px-4 text-center">{complaint.category}</td>
-                <td className="py-2 px-4 text-center text-yellow-600">
+                <td className="py-2 px-4 text-center">
+                  {complaint.description}
+                </td>
+                <td
+                  className={`py-2 px-4 text-center ${
+                    complaint.status === "Solved"
+                      ? "text-green-600 font-bold"
+                      : complaint.status === "Rejected"
+                      ? "text-red-600 font-bold"
+                      : "text-yellow-600 font-bold"
+                  }`}
+                >
                   {complaint.status}
                 </td>
               </tr>

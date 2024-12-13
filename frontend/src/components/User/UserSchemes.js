@@ -4,11 +4,12 @@ const UseSchemes = () => {
   // Using useState for managing schemes
   const [schemes, setSchemes] = useState([
     {
-      name: "Pradhan Mantri Awas Yojana",
-      description: "Affordable housing scheme for rural residents.",
+      name: "Rythu Bandhu Scheme",
+      description:
+        "Telangana Government has proposed a new scheme for providing investment support to Agriculture and Horticulture crops by way of a grant  Rs.5000/- per Acre per Farmer ",
       eligibility: [
-        "BPL category families",
-        "No pucca house ownership",
+        "Farmers",
+        "Should have land for farming",
         "Rural residents only",
       ],
     },
@@ -25,6 +26,12 @@ const UseSchemes = () => {
       name: "National Rural Employment Guarantee Act (NREGA)",
       description: "Employment scheme providing 100 days of wage employment.",
       eligibility: ["Rural households", "Willing to do unskilled manual labor"],
+    },
+    {
+      name: "Pradhan Mantri Kisan Maan Dhan Yojana ",
+      description:
+        "The Government of India has introduced an Old Age Pension Scheme for all land holdingSmall and Marginal Farmers (SMFs) in the country, namely, the “Pradhan Mantri KisanMaan-Dhan Yojana (PM-KMY)”, as a voluntary and contributory pension scheme for theentry age group of 18 to 40 years.",
+      eligibility: ["Rural households"],
     },
   ]);
 

@@ -17,23 +17,10 @@
 //     console.log("server error", error);
 //   });
 
-
-
-
-
-
-
-
-
-
-
-
-
 // // server.js
 // import express from "express";
 // import cors from "cors";
 // // import dotenv from "dotenv";
-
 
 // import userRoutes from "./src/routes/user.routes.js";
 // import connectDB from "./src/db/dbindex.js";
@@ -41,9 +28,6 @@
 // // dotenv.config();
 // import dotenv from 'dotenv';
 // dotenv.config();  // Load the .env file
-
-
-
 
 // const app = express();
 // const PORT = process.env.PORT || 5000;
@@ -88,36 +72,23 @@
 //   console.log(`Server is running on port ${PORT}`);
 // });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv"; // Import dotenv for environment variables
 import connectDB from "./src/db/dbindex.js";
-import userRoutes from "./src/routes/user.routes.js";
-import { Complaint } from "./src/models/complaint.model.js";
+import app from "./src/app.js";
+//import { Activity } from "./src/models/activity.model.js";
+
+// import userRouter from "./routes/user.routes.js";
+// import adminRouter from "./routes/admin.routes.js";
 
 // Load environment variables from .env file
 dotenv.config();
 
-// Initialize express app
-const app = express();
-
 // CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000', // specify the frontend origin
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // specify allowed methods
+  origin: "http://localhost:3000", // specify the frontend origin
+  methods: ["GET", "POST", "PUT", "DELETE"], // specify allowed methods
   credentials: true, // allow credentials (cookies, etc.)
 };
 
@@ -131,7 +102,7 @@ app.use(express.json());
 connectDB()
   .then(() => {
     console.log("Database connected successfully!");
-    
+
     // Start the server once database connection is successful
     app.listen(process.env.PORT || 5000, () => {
       console.log(`Server is running on port ${process.env.PORT || 5000}`);
@@ -141,24 +112,19 @@ connectDB()
     console.error("Database connection error:", error);
   });
 
+// //insert complaints
+// const createannounce = async () => {
+//   try {
+//     const newAnnouncement = new Activity({
+//       title: "Grama Panchayat Meeting",
+//       description: "asdfasdfad",
+//       image: "cloudinary_url",
+//     });
+//     await newAnnouncement.save();
+//     console.log("announcement added successfully!");
+//   } catch (error) {
+//     console.error("Error creating complaint:", error);
+//   }
+// };
 
-  //insert complaints
-  // const createComplaint = async () => {
-  //     try {
-  //       const newComplaint = new Complaint({
-  //         category: "water",
-  //         description:"abcd",
-  //         user: "vinay",
-  //         status: "pending",
-  //       });
-  //       await newComplaint.save();
-  //       console.log("complaint added successfully!");
-  //     } catch (error) {
-  //       console.error("Error creating complaint:", error);
-  //     }
-  //   };
-    
-  //    createComplaint();
-
-// Use Routes for user API
-app.use("/api/v1/users", userRoutes);
+// createannounce();

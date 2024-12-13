@@ -1,3 +1,4 @@
+import { Complaint } from "../models/complaint.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -124,4 +125,156 @@ const registerAdmin = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, newUser, "user registered successfully"));
 });
 
-export { loginAdmin, registerAdmin };
+const getAllComplaints = async (req, res) => {
+  try {
+    const allcomplaints = await Complaint.find().sort({
+      createdAt: -1,
+    });
+    if (!allcomplaints.length) throw new Error("No complaints found");
+    return res.status(200).json(allcomplaints);
+  } catch (error) {
+    res.status(400).json({ message: "Error fetching complaints" });
+  }
+};
+
+const getAllUsers = async (req, res) => {
+  // console.log("called getalluser funtion");
+  try {
+    const allusers = await User.find();
+    if (!allusers.length) throw new Error("No Users found");
+    return res.status(200).json({ users: allusers });
+  } catch (error) {
+    res.status(400).json({ messge: "Error fetching complaints" });
+  }
+};
+
+const updateComplaints = async (req, res) => {
+  try {
+    const { user, status, comp_id } = req.body;
+    const complaints = await Complaint.findByIdAndUpdate(
+      { _id: comp_id },
+      { status: status }
+    );
+
+    if (!complaints) throw new ApiError(400, "Complaints not found");
+    return res.status(200).json(complaints);
+  } catch (error) {
+    // console.log("nikhil");
+    res.status(400).json({ message: "something went wrong" });
+  }
+};
+import cloudinary from "cloudinary";
+import multer from "multer";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { Announcement } from "../models/announcement.model.js";
+import { Activity } from "../models/activity.model.js";
+
+// Configure Cloudinary
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+// Configure Multer Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary.v2,
+  params: {
+    folder: "announcements", // Cloudinary folder
+    allowed_formats: ["jpeg", "png", "jpg"],
+  },
+});
+
+const upload = multer({ storage }).single("image");
+
+// Add Announcement Controller
+const addAnnouncement = async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(500).json({ message: "Image upload failed" });
+    }
+
+    const { title, description, username, image, fullname } = req.body;
+
+    try {
+      const newAnnouncement = await Announcement.create({
+        title,
+        description,
+        image, // Cloudinary URL
+        username: username,
+        fullname: fullname,
+      });
+
+      if (!newAnnouncement) {
+        return res.status(500).json({ message: "Failed to add announcement" });
+      }
+
+      res.status(200).json({ announcement: newAnnouncement });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+};
+
+const addActivity = async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(500).json({ message: "Image upload failed" });
+    }
+
+    const { title, description, username, image } = req.body;
+
+    try {
+      const newActivity = await Activity.create({
+        title,
+        description,
+        image, // Cloudinary URL
+        username: username,
+      });
+
+      if (!newActivity) {
+        return res.status(500).json({ message: "Failed to add Activity" });
+      }
+
+      res.status(200).json({ activity: newActivity });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+};
+
+const getUserFullName = async (req, res) => {
+  try {
+    const { username } = req.params; // Get username from URL parameter
+    if (!username) {
+      return res.status(400).json({ message: "Username not provided" });
+    }
+    // Find the user by username
+    const user = await User.findOne({ username: username });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    //console.log("from backend", user.fullname);
+    res.status(200).json({ fullname: user.fullname });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error fetching user data" });
+  }
+};
+
+export {
+  addActivity,
+  getUserFullName,
+  addAnnouncement,
+  loginAdmin,
+  registerAdmin,
+  getAllComplaints,
+  getAllUsers,
+  updateComplaints,
+};

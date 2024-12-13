@@ -9,14 +9,14 @@ const complaintSchema = new Schema(
       type: String,
       required: true,
     },
-    user: {
+    username: {
       type: String,
       required: true,
     },
     status: {
       type: String,
-      enum: ["pending", "accept", "reject"],
-      default: "pending",
+      enum: ["Pending", "Solved", "Rejected"],
+      default: "Pending",
     },
     refreshToken: { type: String },
   },

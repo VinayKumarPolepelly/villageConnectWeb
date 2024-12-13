@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { BASE_URL } from "../../helper";
 const UserProfileIcon = ({ si }) => (
@@ -8,13 +8,13 @@ const UserProfileIcon = ({ si }) => (
   </div>
 );
 
-const Logout = ({handleLogout, user}) => (
+const Logout = ({ handleLogout, user }) => (
   <div className="flex justify-end ">
     <div className="w-[200px]  h-[200px] text-center p-5 bg-gray-100 border-4 border-green-200 shadow-2xl mt-[45px] mr-[65px]  absolute rounded-xl rounded-tr-none ">
       <div className="ml-[46px] h-[65px] w-[65px] mt-[-6px] text-green-700 rounded-full border-solid border-green-600   border-4 p-1 cursor-pointer active:border-gray-400 ">
         <UserProfileIcon si={48} />
       </div>
-      <h1 className="mt-4 ml-1 mb-3">User</h1>
+      <h1 className="mt-4 ml-1 mb-3">{user}</h1>
       <button
         onClick={handleLogout}
         className="text-sm text-white ml-1 border-2 p-[7px] bg-green-700 hover:bg-green-600 hover:shadow-lg active:bg-green-800 rounded-lg active:border-collapse active:font-semibold active:shadow-2xl"
@@ -28,6 +28,7 @@ const Logout = ({handleLogout, user}) => (
 const UserHeader = () => {
   const [showItem, setShowItem] = useState(false);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("currentUser"));
   //const [user, setUser] = useState(null);
   //const [error, setError] = useState(null);
 
@@ -59,8 +60,6 @@ const UserHeader = () => {
   //   fetchUsers();
   // }, [navigate]);
 
-
-
   const handleLogout = async () => {
     // try {
     //   const response = await fetch(`${BASE_URL}/api/v1/users/logout`, {
@@ -73,8 +72,8 @@ const UserHeader = () => {
     //   if (!response.ok) {
     //     throw new Error("Network response was not ok");
     //   }
-      // if (response.ok) {
-        navigate("/"); // Redirect to the login page after successful logout
+    // if (response.ok) {
+    navigate("/"); // Redirect to the login page after successful logout
     //   } else {
     //     // console.error("Logout failed:", response.statusText);
     //   }
@@ -116,11 +115,7 @@ const UserHeader = () => {
               Schemes
             </li>
           </Link>
-          <Link to="/services/">
-            <li className="text-white active:font-semibold link-underline link-underline-black">
-              Request a Service
-            </li>
-          </Link>
+
           <div
             className="h-9 w-10 mt-[-6px] text-white rounded-3xl border-solid border-4 p-1 cursor-pointer active:border-gray-400"
             onClick={() => setShowItem(!showItem)}
@@ -129,7 +124,7 @@ const UserHeader = () => {
           </div>
         </ul>
 
-        {showItem && <Logout handleLogout={handleLogout} />}
+        {showItem && <Logout handleLogout={handleLogout} user={user} />}
       </div>
     </div>
   );

@@ -96,9 +96,6 @@
 
 // export const User = mongoose.model("User", userSchema);
 
-
-
-
 // models/User.js
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
@@ -107,7 +104,7 @@ import jwt from "jsonwebtoken";
 const userSchema = new Schema(
   {
     username: { type: String, unique: true, lowercase: true },
-    fullname: { type: String,  },
+    fullname: { type: String },
     email: { type: String, unique: true, lowercase: true },
     password: { type: String },
     address: { type: String },
@@ -141,9 +138,9 @@ userSchema.methods.generateAccessToken = function () {
   );
 };
 userSchema.methods.generateSessionToken = function () {
-  return jwt.sign({ _id: this._id }, process.env.JWT_SECRET, { expiresIn: '7d' }); // Refresh token valid for 7 days
+  return jwt.sign({ _id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  }); // Refresh token valid for 7 days
 };
 
 export const User = mongoose.model("User", userSchema);
-
-

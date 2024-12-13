@@ -3,18 +3,22 @@ import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
+import { compare } from "bcrypt";
+import { Complaint } from "../models/complaint.model.js";
+import { Announcement } from "../models/announcement.model.js";
+import { Activity } from "../models/activity.model.js";
 
-// Generate Tokens Function
-const generateTokens = async (userId) => {
-  const userInstance = await User.findById(userId);
-  const accessToken = await userInstance.generateAccessToken();
-  const refreshToken = await userInstance.generateSessionToken();
+// // Generate Tokens Function
+// const generateTokens = async (userId) => {
+//   const userInstance = await User.findById(userId);
+//   const accessToken = await userInstance.generateAccessToken();
+//   const refreshToken = await userInstance.generateSessionToken();
 
-  userInstance.refreshToken = refreshToken;
-  await userInstance.save({ validateBeforeSave: false });
+//   userInstance.refreshToken = refreshToken;
+//   await userInstance.save({ validateBeforeSave: false });
 
-  return { accessToken, refreshToken };
-};
+//   return { accessToken, refreshToken };
+// };
 
 // Register User/Admin
 export const registerUser = asyncHandler(async (req, res) => {
@@ -50,27 +54,115 @@ export const registerUser = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(201, createdUser, "User registered successfully"));
 
-  console.log(password);
+  //console.log(password);
 });
 
-// Login User/Admin
+// // Login User/Admin
+// export const loginUser = asyncHandler(async (req, res) => {
+//   const { username, password } = req.body;
+
+//   if (!username || !password) {
+//     throw new ApiError(400, "Username and password are required");
+//   }
+
+//   const user = await User.findOne({ username });
+//   if (!user || !(await user.isPasswordCorrect(password))) {
+//     throw new ApiError(401, "Invalid credentials");
+//   }
+
+//   const { accessToken, refreshToken } = await generateTokens(user._id);
+
+//   const options = {
+//     httpOnly: true,
+//     secure: true,
+//     sameSite: "None",
+//   };
+
+//   res
+//     .status(200)
+//     .cookie("accessToken", accessToken, options)
+//     .cookie("refreshToken", refreshToken, options)
+//     .json(
+//       new ApiResponse(
+//         200,
+//         { user: { ...user.toObject(), accessToken } },
+//         "User logged in successfully"
+//       )
+//     );
+// });
+
+// // Logout User
+// export const logoutUser = asyncHandler(async (req, res) => {
+//   await User.findByIdAndUpdate(req.user._id, {
+//     refreshToken: null,
+//   });
+
+//   const options = {
+//     path: "/",
+//     secure: true,
+//     sameSite: "None",
+//   };
+
+//   res
+//     .status(200)
+//     .clearCookie("accessToken", options)
+//     .clearCookie("refreshToken", options)
+//     .json(new ApiResponse(200, {}, "User logged out successfully"));
+// });
+
+const generateAccessTokenAndRefreshToken = async (userId) => {
+  try {
+    //console.log(userId);
+    const userInstance = await User.findById(userId);
+    //console.log(userInstance);
+    const accessToken = await userInstance.generateAccessToken();
+    const refreshToken = await userInstance.generateSessionToken();
+    userInstance.refreshToken = refreshToken;
+    userInstance.save({ validateBeforeSave: false });
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(400, "something went wrong while generating the tokens");
+  }
+};
+
+// const registerUser = async (req, res, next) => {
+//   try {
+//     await res.status(200).json({
+//       message: "OK",
+//     });
+//   } catch (error) {
+//     console.log("error", error);
+//   }
+// };
+
 export const loginUser = asyncHandler(async (req, res) => {
   const { username, password } = req.body;
 
-  if (!username || !password) {
-    throw new ApiError(400, "Username and password are required");
+  if (!username) {
+    throw new ApiError(400, "username is required");
+  }
+  if (!password) {
+    throw new ApiError(400, "password is required");
   }
 
-  const user = await User.findOne({ username });
-  if (!user || !(await user.isPasswordCorrect(password))) {
-    throw new ApiError(401, "Invalid credentials");
+  const existedUser = await User.findOne({ username });
+  if (!existedUser) {
+    throw new ApiError(404, "you are not registered yet");
   }
 
-  const { accessToken, refreshToken } = await generateTokens(user._id);
+  const isPasswordValid = await existedUser.isPasswordCorrect(password);
+  if (!isPasswordValid) {
+    throw new ApiError(404, "invalid user credentials");
+  }
+
+  const { accessToken, refreshToken } =
+    await generateAccessTokenAndRefreshToken(existedUser._id);
+
+  //const accessToken = existedUser.generateAccessToken();
 
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: true, // Ensure this is true if using HTTPS
     sameSite: "None",
   };
 
@@ -81,31 +173,37 @@ export const loginUser = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        { user: { ...user.toObject(), accessToken } },
-        "User logged in successfully"
+        { user: existedUser, accessToken },
+        "user logged in successfully"
       )
     );
 });
 
-// Logout User
 export const logoutUser = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(req.user._id, {
-    refreshToken: null,
-  });
-
+  //console.log(req.user);
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: { refreshToken: undefined },
+    },
+    {
+      new: true,
+    }
+  );
   const options = {
     path: "/",
     secure: true,
     sameSite: "None",
   };
-
-  res
+  return res
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out successfully"));
+  // .json({
+  //   tokens: { accessToken, refreshToken },
+  // });
 });
-
 
 // Refresh Access Token
 export const refreshAccessToken = asyncHandler(async (req, res) => {
@@ -153,23 +251,70 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-
 export const addComplaint = asyncHandler(async (req, res) => {
-  const { category, description, status } = req.body;
-  const newComplaint = await complaint.create({
+  const { category, description, username } = req.body;
+
+  if (!username || !category || !description) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const newComplaint = await Complaint.create({
     category,
     description,
-    status,
-    user: req.user.username,
+    username: username, // Correct field reference
+    status: "Pending", // Default status
   });
+
   if (!newComplaint) throw new ApiError(500, "Internal server error");
+
   return res.status(200).json({ complaint: newComplaint });
 });
 
-export const getComplaints = asyncHandler(async (req, res) => {
-  const username = req.user.username;
-  //console.log(userId);
-  const complaints = await complaint.find({ user: username });
-  if (!complaints) throw new ApiError(400, "leaves not found");
-  return res.status(200).json({ complaints: complaints });
-});
+export const getComplaints = async (req, res) => {
+  try {
+    // Extract username from params
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username not provided" });
+    }
+
+    // Fetch complaints by username
+    const complaints = await Complaint.find({ username: username }).sort({
+      createdAt: -1,
+    });
+
+    if (!complaints || complaints.length === 0) {
+      return res.status(404).json({ message: "No complaints found" });
+    }
+
+    res.status(200).json({ complaint: complaints });
+  } catch (error) {
+    console.error("Error fetching complaints:", error);
+    res.status(500).json({ message: "Error fetching complaints" });
+  }
+};
+
+export const getAnnouncements = async (req, res) => {
+  try {
+    const allAnnouncements = await Announcement.find().sort({
+      createdAt: -1,
+    });
+    if (!allAnnouncements.length) throw new Error("No Announcements found");
+    return res.status(200).json(allAnnouncements);
+  } catch (error) {
+    res.status(400).json({ message: "Error fetching Announcements" });
+  }
+};
+
+export const getActivities = async (req, res) => {
+  try {
+    const allActivities = await Activity.find().sort({
+      createdAt: -1,
+    });
+    if (!allActivities.length) throw new Error("No Activities found");
+    return res.status(200).json(allActivities);
+  } catch (error) {
+    res.status(400).json({ message: "Error fetching Activities" });
+  }
+};
