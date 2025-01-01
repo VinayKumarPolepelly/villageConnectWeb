@@ -5,7 +5,6 @@ import "./App.css";
 
 const AdminLogin = lazy(() => import("./components/Admin/AdminLogin"));
 const AdminHomePage = lazy(() => import("./components/Admin/AdminHomePage"));
-//const AdminUsers = lazy(() => import("./components/Admin/AdminUsers"));
 const AdminAddAnnouncement = lazy(() =>
   import("./components/Admin/AdminAddAnouncement")
 );
@@ -15,6 +14,8 @@ const AdminViewComplaints = lazy(() =>
 const AdminAddActivity = lazy(() =>
   import("./components/Admin/AdminAddActivity")
 );
+const AdminAddScheme = lazy(() => import("./components/Admin/AdminAddScheme"));
+const AdminViewUsers = lazy(() => import("./components/Admin/AdminViewUsers"));
 const UserLogin = lazy(() => import("./components/User/UserLogin"));
 const UserHomePage = lazy(() => import("./components/User/UserHomePage"));
 const UserRegister = lazy(() => import("./components/User/UserReg"));
@@ -23,7 +24,6 @@ const UserVillageAnnouncements = lazy(() =>
 );
 const UserComplaint = lazy(() => import("./components/User/UserComplaint"));
 const UserSchemes = lazy(() => import("./components/User/UserSchemes"));
-const UserServices = lazy(() => import("./components/User/UserServices"));
 const UserActivities = lazy(() => import("./components/User/UserActivities"));
 
 const Applayout = () => {
@@ -97,10 +97,26 @@ const appRouter = createBrowserRouter([
         ),
       },
       {
+        path: "admin/AddScheme",
+        element: (
+          <Suspense>
+            <AdminAddScheme />
+          </Suspense>
+        ),
+      },
+      {
         path: "admin/ViewComplaints",
         element: (
           <Suspense>
             <AdminViewComplaints />
+          </Suspense>
+        ),
+      },
+      {
+        path: "admin/ViewUsers",
+        element: (
+          <Suspense>
+            <AdminViewUsers />
           </Suspense>
         ),
       },
@@ -141,14 +157,6 @@ const appRouter = createBrowserRouter([
         element: (
           <Suspense>
             <UserSchemes />
-          </Suspense>
-        ),
-      },
-      {
-        path: "/services",
-        element: (
-          <Suspense>
-            <UserServices />
           </Suspense>
         ),
       },

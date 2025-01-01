@@ -77,6 +77,7 @@ import cors from "cors";
 import dotenv from "dotenv"; // Import dotenv for environment variables
 import connectDB from "./src/db/dbindex.js";
 import app from "./src/app.js";
+import { SchemeGovt } from "./src/models/scheme.model.js";
 //import { Activity } from "./src/models/activity.model.js";
 
 // import userRouter from "./routes/user.routes.js";
@@ -115,10 +116,10 @@ connectDB()
 // //insert complaints
 // const createannounce = async () => {
 //   try {
-//     const newAnnouncement = new Activity({
+//     const newAnnouncement = new SchemeGovt({
 //       title: "Grama Panchayat Meeting",
 //       description: "asdfasdfad",
-//       image: "cloudinary_url",
+//       username: "s",
 //     });
 //     await newAnnouncement.save();
 //     console.log("announcement added successfully!");

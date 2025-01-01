@@ -32,6 +32,7 @@ import {
   registerUser,
   loginUser,
   logoutUser,
+  getSchemes,
   refreshAccessToken,
 } from "../controllers/user.controller.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
@@ -49,6 +50,8 @@ router.route("/addComplaint/").post(addComplaint);
 router.route("/getComplaints/:username").get(getComplaints);
 router.route("/getannouncements").get(getAnnouncements);
 router.route("/getactivities").get(getActivities);
+router.route("/getschemes").get(getSchemes);
+
 export default router;
 
 // // routes/userRoutes.js

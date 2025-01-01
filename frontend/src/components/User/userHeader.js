@@ -107,7 +107,7 @@ const UserHeader = () => {
           </Link>
           <Link to="/villageActivity">
             <li className="text-white active:font-semibold link-underline link-underline-black">
-              Activies
+              Activities
             </li>
           </Link>
           <Link to="/villageSchemes/">

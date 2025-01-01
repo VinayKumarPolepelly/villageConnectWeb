@@ -7,6 +7,7 @@ import { compare } from "bcrypt";
 import { Complaint } from "../models/complaint.model.js";
 import { Announcement } from "../models/announcement.model.js";
 import { Activity } from "../models/activity.model.js";
+import { SchemeGovt } from "../models/scheme.model.js";
 
 // // Generate Tokens Function
 // const generateTokens = async (userId) => {
@@ -22,8 +23,8 @@ import { Activity } from "../models/activity.model.js";
 
 // Register User/Admin
 export const registerUser = asyncHandler(async (req, res) => {
-  const { username, fullname, email, password, phoneNumber, role } = req.body;
-  if (!fullname || !email || !username || !password || !phoneNumber) {
+  const { username, fullname, email, password, mobile, role } = req.body;
+  if (!fullname || !email || !username || !password || !mobile) {
     //throw new ApiError(400, "All fields are required");
   }
   //console.log(password);
@@ -38,7 +39,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     email,
     username,
     password,
-    phoneNumber,
+    mobile,
     role,
   });
   //console.log(password);
@@ -316,5 +317,17 @@ export const getActivities = async (req, res) => {
     return res.status(200).json(allActivities);
   } catch (error) {
     res.status(400).json({ message: "Error fetching Activities" });
+  }
+};
+
+export const getSchemes = async (req, res) => {
+  try {
+    const allActivities = await SchemeGovt.find().sort({
+      createdAt: -1,
+    });
+    if (!allActivities.length) throw new Error("No Schemes found");
+    return res.status(200).json(allActivities);
+  } catch (error) {
+    res.status(400).json({ message: "Error fetching Schemes" });
   }
 };

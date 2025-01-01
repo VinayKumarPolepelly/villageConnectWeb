@@ -61,7 +61,7 @@ const AdminHeader = () => {
         />
         <ul className="mt-1 flex justify-between px-10 py-4 text-center  w-full">
           <Link to="/admin">
-            <li className="active:font-semibold text-white link-underline link-underline-black">
+            <li className="active:font-semibold text-white hover:underline">
               Home
             </li>
           </Link>
@@ -78,6 +78,16 @@ const AdminHeader = () => {
           <Link to="/admin/AddActivity">
             <li className="text-white active:font-semibold link-underline link-underline-black">
               Add Activities
+            </li>
+          </Link>
+          <Link to="/admin/AddScheme">
+            <li className="text-white active:font-semibold link-underline link-underline-black">
+              Add Schemes
+            </li>
+          </Link>
+          <Link to="/admin/ViewUsers">
+            <li className="text-white active:font-semibold link-underline link-underline-black">
+              View Users
             </li>
           </Link>
 

@@ -138,13 +138,14 @@ const getAllComplaints = async (req, res) => {
 };
 
 const getAllUsers = async (req, res) => {
-  // console.log("called getalluser funtion");
   try {
-    const allusers = await User.find();
-    if (!allusers.length) throw new Error("No Users found");
-    return res.status(200).json({ users: allusers });
+    const allusers = await User.find().sort({ createdAt: -1 });
+    if (!allusers.length) {
+      return res.status(200).json({ users: [], message: "No users found" });
+    }
+    return res.status(200).json(allusers);
   } catch (error) {
-    res.status(400).json({ messge: "Error fetching complaints" });
+    res.status(500).json({ message: `Error fetching users: ${error.message}` });
   }
 };
 
@@ -168,6 +169,8 @@ import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import { Announcement } from "../models/announcement.model.js";
 import { Activity } from "../models/activity.model.js";
+import { Schema } from "mongoose";
+import { SchemeGovt } from "../models/scheme.model.js";
 
 // Configure Cloudinary
 cloudinary.v2.config({
@@ -245,6 +248,33 @@ const addActivity = async (req, res) => {
   });
 };
 
+const addScheme = async (req, res) => {
+  upload(req, res, async (err) => {
+    if (err) {
+      return res.status(500).json({ message: "Image upload failed" });
+    }
+
+    const { title, description, username } = req.body;
+
+    try {
+      const newScheme = await SchemeGovt.create({
+        title,
+        description,
+        username: username,
+      });
+
+      if (!newScheme) {
+        return res.status(500).json({ message: "Failed to add Scheme" });
+      }
+
+      res.status(200).json({ Scheme: newScheme });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server error" });
+    }
+  });
+};
+
 const getUserFullName = async (req, res) => {
   try {
     const { username } = req.params; // Get username from URL parameter
@@ -277,4 +307,5 @@ export {
   getAllComplaints,
   getAllUsers,
   updateComplaints,
+  addScheme,
 };
