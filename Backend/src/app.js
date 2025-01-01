@@ -6,7 +6,7 @@ import adminRouter from "./routes/admin.routes.js";
 const app = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000", // Frontend domain
+  origin: "https://village-connect-web.vercel.app", // Frontend domain
   credentials: true, // Allow credentials (cookies) to be sent
 };
 
