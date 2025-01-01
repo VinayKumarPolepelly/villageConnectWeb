@@ -1,1 +1,1 @@
-export const BASE_URL = "http://localhost:1024";
+export const BASE_URL = "https://villageconnectweb.onrender.com/";
