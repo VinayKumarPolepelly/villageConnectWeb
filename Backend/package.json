@@ -4,8 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "node index.js"
     "dev": "nodemon index.js",
-    "build": "npm i"
+    "build": "echo 'No build step required'"
+
   },
   "keywords": [],
   "author": "",
