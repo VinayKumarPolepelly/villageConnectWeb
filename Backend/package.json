@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "build":"npm i"
+    "build": "react-scripts build" // if using Create React App
   },
   "keywords": [],
   "author": "",
